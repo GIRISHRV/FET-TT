@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { 
   Box, Typography, Paper, Table, TableBody, TableCell, 
-  TableContainer, TableHead, TableRow, Chip, Button, IconButton,
-  Avatar, Badge
+  TableContainer, TableHead, TableRow, Chip, IconButton,
+  Avatar, Badge, List, ListItem, ListItemButton, Divider
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -32,10 +32,10 @@ function stringAvatar(name) {
   return {
     sx: {
       bgcolor: stringToColor(name),
-      width: 48,
-      height: 48,
+      width: 44,
+      height: 44,
       fontWeight: 'bold',
-      fontSize: '1.2rem'
+      fontSize: '1.1rem'
     },
     children: initials.toUpperCase(),
   };
@@ -106,73 +106,95 @@ function FacultyDetailsView({ facultyName, data, now, currentBatch, onBack }) {
   const currentPeriodIdx = dynamicPeriods.findIndex(p => toMins(p.start) <= currentMins && toMins(p.end) >= currentMins);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%', animation: 'fadeIn 0.2s ease-in' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: -1 }}>
-        <IconButton onClick={onBack}><ArrowBackIcon /></IconButton>
-        <Typography variant="h5" fontWeight={500}>{facultyName}</Typography>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', animation: 'fadeIn 0.2s ease-in', p: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <IconButton edge="start" onClick={onBack} sx={{ ml: -1 }}><ArrowBackIcon /></IconButton>
+        <Typography variant="h5" fontWeight={600}>{facultyName}</Typography>
       </Box>
 
-      <Paper sx={{ p: 2, bgcolor: 'background.surfaceContainerLow', borderRadius: 2, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <Typography variant="subtitle2" gutterBottom color="text.secondary" sx={{ textTransform: 'uppercase', flexShrink: 0 }}>
-          {currentDayStr}'s Schedule (Across College)
-        </Typography>
-        
+      <Typography variant="subtitle2" gutterBottom color="text.secondary" sx={{ textTransform: 'uppercase', mb: 1.5 }}>
+        {currentDayStr}'s Schedule
+      </Typography>
+
+      <Paper 
+        elevation={0} 
+        variant="outlined" 
+        sx={{ 
+          borderRadius: 2, 
+          overflow: 'hidden', 
+          bgcolor: 'background.paper',
+          display: 'flex', 
+          flexDirection: 'column', 
+          flex: 1
+        }}
+      >
         <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
-          <Table size="small" aria-label="faculty-schedule" sx={{ tableLayout: 'fixed', width: '100%' }}>
-            <TableBody>
-              {dynamicPeriods.map((period, index) => {
-                const slot = daySchedule.find(s => s.periodIndex === index);
-                const isCurrent = index === currentPeriodIdx;
-                const parsed = slot ? parseSlotText(slot.text) : null;
-                
-                return (
-                  <TableRow 
-                    key={index} 
+          <List disablePadding>
+            {dynamicPeriods.map((period, index) => {
+              const slot = daySchedule.find(s => s.periodIndex === index);
+              const isCurrent = index === currentPeriodIdx;
+              const isPast = index < currentPeriodIdx;
+              const parsed = slot ? parseSlotText(slot.text) : null;
+              
+              return (
+                <React.Fragment key={index}>
+                  <ListItem 
                     sx={{ 
-                      opacity: index < currentPeriodIdx ? 0.5 : 1,
+                      py: 2.5,
+                      px: 3,
+                      opacity: isPast ? 0.5 : 1,
                       bgcolor: isCurrent ? 'primary.container' : 'transparent',
                       borderLeft: isCurrent ? 4 : 0,
-                      borderColor: 'primary.main'
+                      borderColor: 'primary.main',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 3
                     }}
                   >
-                    <TableCell sx={{ pl: isCurrent ? 1 : 0, borderBottom: 'none', width: '35%' }}>
-                      <Typography variant="caption" color={isCurrent ? 'primary.onContainer' : 'text.secondary'} fontWeight={isCurrent ? 'bold' : 'normal'} display="block">
-                        {formatTime12h(period.start)} - {formatTime12h(period.end)}
+                    <Box sx={{ minWidth: 85, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                      <Typography variant="caption" component="div" color={isCurrent ? 'primary.onContainer' : 'text.secondary'} fontWeight={isCurrent ? 'bold' : 'normal'}>
+                        {formatTime12h(period.start)}
                       </Typography>
-                    </TableCell>
-                    <TableCell sx={{ borderBottom: 'none', width: '40%', whiteSpace: 'normal', pr: 1 }}>
+                      <Typography variant="caption" component="div" color={isCurrent ? 'primary.onContainer' : 'text.secondary'} fontWeight={isCurrent ? 'bold' : 'normal'}>
+                        {formatTime12h(period.end)}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                       {slot ? (
                         <>
-                          <Typography variant="body2" fontWeight={isCurrent ? 'bold' : 'normal'} color={isCurrent ? 'primary.onContainer' : 'text.primary'}>
+                          <Typography variant="body1" fontWeight={isCurrent ? 'bold' : '600'} color={isCurrent ? 'primary.onContainer' : 'text.primary'}>
                             {parsed ? parsed.code : slot.text} 
                           </Typography>
-                          <Typography variant="caption" color={isCurrent ? 'primary.onContainer' : 'text.secondary'} display="block">
+                          <Typography variant="caption" color={isCurrent ? 'primary.onContainer' : 'text.secondary'} sx={{ mt: 0.5, display: 'block' }}>
                             Batch: {slot.batch.replace(/\|/g, ' ')}
                           </Typography>
                         </>
                       ) : (
-                        <Typography variant="body2" color="text.secondary" fontStyle="italic">
+                        <Typography variant="body1" color="text.secondary" fontStyle="italic">
                           Free
                         </Typography>
                       )}
-                    </TableCell>
-                    <TableCell sx={{ pr: 0, borderBottom: 'none', textAlign: 'right', width: '25%', whiteSpace: 'normal' }}>
-                      <Typography variant="body2" color={isCurrent ? 'primary.onContainer' : 'text.primary'}>
+                    </Box>
+
+                    <Box sx={{ textAlign: 'right', minWidth: 80 }}>
+                      <Typography variant="body2" fontWeight="600" color={isCurrent ? 'primary.onContainer' : 'text.primary'}>
                         {slot ? (parsed ? parsed.room : '-') : '-'}
                       </Typography>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                    </Box>
+                  </ListItem>
+                  {index < dynamicPeriods.length - 1 && <Divider component="li" />}
+                </React.Fragment>
+              );
+            })}
+          </List>
         </Box>
       </Paper>
     </Box>
   );
 }
 
-function FacultyCard({ facultyName, subjectCode, subjectName, data, now, currentBatch, onClick }) {
+function FacultyListItem({ facultyName, subjectCode, subjectName, data, now, currentBatch, isSkipped, onClick }) {
   const schedule = useMemo(() => getFacultyGlobalSchedule(data, facultyName), [data, facultyName]);
   
   const currentDayStr = getTodayDayName();
@@ -205,7 +227,6 @@ function FacultyCard({ facultyName, subjectCode, subjectName, data, now, current
       }
     }
   } else {
-    // If free now, when is next class?
     let nextClassIdx = -1;
     for (let i = Math.max(0, currentPeriodIdx + 1); i < dynamicPeriods.length; i++) {
       const busy = daySchedule.find(s => s.periodIndex === i);
@@ -220,26 +241,19 @@ function FacultyCard({ facultyName, subjectCode, subjectName, data, now, current
   }
 
   return (
-    <Paper 
-      elevation={0}
+    <ListItemButton
       onClick={onClick}
       sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: 2, 
-        p: 2, 
-        mb: 1.5,
-        borderRadius: 2,
-        border: '1px solid',
-        borderColor: 'divider',
-        bgcolor: 'background.surfaceContainerLow',
-        cursor: 'pointer',
-        transition: 'all 0.2s',
+        py: 1.5, 
+        px: 2,
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 2,
+        opacity: isSkipped ? 0.5 : 1,
+        bgcolor: isSkipped ? 'action.hover' : 'transparent',
+        transition: 'background-color 0.2s',
         '&:hover': {
-          bgcolor: 'action.hover',
-          borderColor: 'primary.main',
-          transform: 'translateY(-2px)',
-          boxShadow: 2
+          bgcolor: 'action.selected'
         }
       }}
     >
@@ -248,28 +262,14 @@ function FacultyCard({ facultyName, subjectCode, subjectName, data, now, current
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         variant="dot"
         sx={{
+          mt: 0.5,
           '& .MuiBadge-badge': {
-            backgroundColor: status === 'Free' ? '#4caf50' : '#f44336', // Success/Error colors
+            backgroundColor: status === 'Free' ? '#4caf50' : '#f44336', 
             color: status === 'Free' ? '#4caf50' : '#f44336',
             boxShadow: `0 0 0 2px var(--mui-palette-background-paper)`,
-            minWidth: 12,
-            height: 12,
+            minWidth: 10,
+            height: 10,
             borderRadius: '50%',
-            '&::after': {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              animation: status === 'Free' ? 'ripple 1.2s infinite ease-in-out' : 'none',
-              border: '1px solid currentColor',
-              content: '""',
-            },
-          },
-          '@keyframes ripple': {
-            '0%': { transform: 'scale(.8)', opacity: 1 },
-            '100%': { transform: 'scale(2.4)', opacity: 0 },
           },
         }}
       >
@@ -277,29 +277,36 @@ function FacultyCard({ facultyName, subjectCode, subjectName, data, now, current
       </Badge>
 
       <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-        <Typography variant="body1" fontWeight="bold" noWrap>
+        <Typography variant="body1" fontWeight="600" noWrap>
           {facultyName}
         </Typography>
-        <Typography variant="body2" color="text.secondary" noWrap>
-          {subjectCode} • {subjectName}
+        <Typography variant="body2" color="text.secondary" noWrap sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <span style={{ fontWeight: 600, color: 'var(--mui-palette-text-primary)' }}>{subjectCode}</span>
+          <span style={{ opacity: 0.8 }}>{subjectName}</span>
         </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+          <Chip 
+            label={statusText} 
+            size="small" 
+            color={status === 'Free' ? 'success' : 'error'} 
+            variant={status === 'Free' ? 'outlined' : 'filled'}
+            sx={{ fontWeight: '600', height: 20, fontSize: '0.65rem' }}
+          />
+          {isSkipped && (
+            <Chip size="small" label="Skipped" color="error" variant="outlined" sx={{ height: 20, fontSize: '0.65rem', fontWeight: 600 }} />
+          )}
+        </Box>
       </Box>
 
-      <Box sx={{ textAlign: 'right', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
-        <Chip 
-          label={statusText} 
-          size="small" 
-          color={status === 'Free' ? 'success' : 'error'} 
-          variant={status === 'Free' ? 'outlined' : 'filled'}
-          sx={{ fontWeight: 'bold', height: 20, fontSize: '0.7rem' }}
-        />
+      <Box sx={{ textAlign: 'right', flexShrink: 0, pt: 0.5 }}>
         {nextFreeText && (
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem' }}>
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem', display: 'block' }}>
             {nextFreeText}
           </Typography>
         )}
       </Box>
-    </Paper>
+    </ListItemButton>
   );
 }
 
@@ -311,7 +318,7 @@ export default function FacultyPanel() {
   useEffect(() => {
     const timer = setInterval(() => {
       setNow(new Date());
-    }, 30000); // 30 seconds
+    }, 30000); 
     return () => clearInterval(timer);
   }, []);
 
@@ -329,36 +336,55 @@ export default function FacultyPanel() {
     );
   }
 
-  // Since type metadata is missing, we consider all subjects in the batch.
-  // We can filter to only show faculties of subjects the user is actually taking.
-  const activeSubjects = currentBatch.subjects.filter(sub => selectedSubjects.includes(sub.code));
+  // We iterate over all subjects, skipping only those that don't have a faculty listed
+  const allSubjectsWithFaculty = currentBatch.subjects.filter(sub => sub.faculty);
+
+  // Flatten out so each faculty has an entry, even if a subject has multiple faculties
+  const facultyEntries = [];
+  allSubjectsWithFaculty.forEach(sub => {
+    const isSkipped = !selectedSubjects.includes(sub.code);
+    const faculties = sub.faculty.split(',').map(f => f.trim()).filter(Boolean);
+    
+    faculties.forEach(facultyName => {
+      facultyEntries.push({
+        facultyName,
+        subjectCode: sub.code,
+        subjectName: sub.name,
+        isSkipped
+      });
+    });
+  });
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%', animation: 'fadeIn 0.2s ease-in' }}>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-        Your faculty members for this semester. Click on a faculty to view their schedule.
-      </Typography>
-
-      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', px: 0.5, pb: 2 }}>
-        {activeSubjects.map((sub) => {
-          if (!sub.faculty) return null;
-          
-          const faculties = sub.faculty.split(',').map(f => f.trim()).filter(Boolean);
-          
-          return faculties.map((facultyName, idx) => (
-            <FacultyCard 
-              key={`${sub.code}-${idx}`} 
-              facultyName={facultyName} 
-              subjectCode={sub.code}
-              subjectName={sub.name}
-              data={data}
-              now={now}
-              currentBatch={currentBatch}
-              onClick={() => setSelectedFaculty(facultyName)}
-            />
-          ));
-        })}
-      </Box>
+    <Box sx={{ display: 'flex', flexDirection: 'column', px: 1, py: 2, animation: 'fadeIn 0.2s ease-in' }}>
+      <Paper 
+        elevation={0} 
+        variant="outlined" 
+        sx={{ 
+          borderRadius: 2, 
+          overflow: 'hidden', 
+          bgcolor: 'background.paper',
+          mx: 1 
+        }}
+      >
+        <List disablePadding>
+          {facultyEntries.map((entry, index) => (
+            <React.Fragment key={`${entry.subjectCode}-${index}`}>
+              <FacultyListItem 
+                facultyName={entry.facultyName} 
+                subjectCode={entry.subjectCode}
+                subjectName={entry.subjectName}
+                data={data}
+                now={now}
+                currentBatch={currentBatch}
+                isSkipped={entry.isSkipped}
+                onClick={() => setSelectedFaculty(entry.facultyName)}
+              />
+              {index < facultyEntries.length - 1 && <Divider component="li" />}
+            </React.Fragment>
+          ))}
+        </List>
+      </Paper>
     </Box>
   );
 }

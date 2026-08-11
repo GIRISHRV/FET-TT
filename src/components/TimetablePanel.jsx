@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Chip, Tabs, Tab, Paper
+  Box, Typography, Chip, ToggleButton, ToggleButtonGroup, Paper
 } from '@mui/material';
 import { useAppStore } from '../store';
 import { formatTime12h, toMins } from '../utils';
@@ -45,21 +45,21 @@ export default function TimetablePanel() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}>
-      <Tabs 
-        value={tab} 
-        onChange={(e, v) => setTab(v)} 
-        variant="fullWidth" 
-        sx={{ borderBottom: 1, borderColor: 'divider', minHeight: 48 }}
-      >
-        {DAYS.map((day, index) => (
-          <Tab 
-            key={day} 
-            label={day} 
-            value={index} 
-            sx={{ minWidth: 0, px: 1 }}
-          />
-        ))}
-      </Tabs>
+      <Box sx={{ px: 2, pt: 2, pb: 1 }}>
+        <ToggleButtonGroup
+          value={tab}
+          exclusive
+          onChange={(e, val) => val !== null && setTab(val)}
+          fullWidth
+          size="small"
+        >
+          {DAYS.map((day, index) => (
+            <ToggleButton key={day} value={index} sx={{ textTransform: 'none', fontWeight: 600 }}>
+              {day}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Box>
 
       {!hasClasses ? (
         <Typography textAlign="center" color="text.secondary" sx={{ mt: 4 }}>

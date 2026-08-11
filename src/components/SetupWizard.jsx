@@ -203,9 +203,6 @@ export default function SetupWizard({ onClose }) {
 
                 <Box sx={{ mt: 2, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <Typography variant="h6" gutterBottom>Courses</Typography>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Toggle off any electives you aren't taking.
-                  </Typography>
                   
                   <TableContainer component={Paper} sx={{ borderRadius: 1, bgcolor: 'background.surfaceContainerLow', mt: 1, overflowY: 'auto', overflowX: 'hidden', flex: 1 }}>
                     <Table size="small" sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="courses table">

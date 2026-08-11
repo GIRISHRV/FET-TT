@@ -104,6 +104,37 @@ export function AppProvider({ children }) {
     return data && batchKey ? data.batches[batchKey] : null;
   }, [data, batchKey]);
 
+  const masterRoomSchedule = useMemo(() => {
+    if (!data || !data.batches) return null;
+    const rooms = {};
+    
+    Object.values(data.batches).forEach(batch => {
+      if (!batch.grid) return;
+      Object.entries(batch.grid).forEach(([day, periods]) => {
+        Object.entries(periods).forEach(([p, cls]) => {
+          const classes = Array.isArray(cls) ? cls : [cls];
+          classes.forEach(c => {
+            if (['class', 'lab', 'sametime', 'lab-continue'].includes(c.type) && c.text) {
+              const match = c.text.match(/ in (.+)$/);
+              if (match) {
+                const roomName = match[1].trim();
+                if (!rooms[roomName]) rooms[roomName] = {};
+                if (!rooms[roomName][day]) rooms[roomName][day] = {};
+                rooms[roomName][day][p] = {
+                  text: c.text,
+                  type: c.type,
+                  batch: batch.title || `${batch.program} ${batch.semester}${batch.section}`
+                };
+              }
+            }
+          });
+        });
+      });
+    });
+    
+    return rooms;
+  }, [data]);
+
   const value = {
     data,
     mode,
@@ -117,6 +148,7 @@ export function AppProvider({ children }) {
     toggleSubject,
     isSetupComplete,
     currentBatch,
+    masterRoomSchedule,
     fetchError,
     syncData,
     isSyncing

@@ -5,51 +5,51 @@ const getDesignTokens = (mode) => ({
     mode,
     ...(mode === 'light'
       ? {
-          // Light Mode (Pixel 10 inspired)
+          // Light Mode
           primary: {
-            main: '#6750A4', // Material 3 Primary
-            container: '#EADDFF',
-            onContainer: '#21005D',
+            main: '#ef6905',
+            container: '#ffccaa',
+            onContainer: '#4a1f00',
           },
           secondary: {
-            main: '#625B71',
-            container: '#E8DEF8',
-            onContainer: '#1D192B',
+            main: '#486c2f',
+            container: '#cce5bb',
+            onContainer: '#15240a',
           },
           background: {
-            default: '#FFFBFE',
-            paper: '#FFFBFE',
-            surfaceContainerLow: '#F7F2FA',
-            surfaceContainer: '#F3EDF7',
-            surfaceContainerHigh: '#ECE6F0',
+            default: '#fcfaf7',
+            paper: '#ffffff',
+            surfaceContainerLow: '#f4f0e6',
+            surfaceContainer: '#ebe5d5',
+            surfaceContainerHigh: '#e0d8c2',
           },
           text: {
-            primary: '#1C1B1F',
-            secondary: '#49454F',
+            primary: '#2b1b1b',
+            secondary: '#6b5a5a',
           },
         }
       : {
           // Dark Mode
           primary: {
-            main: '#D0BCFF',
-            container: '#4F378B',
-            onContainer: '#EADDFF',
+            main: '#ef6905',
+            container: '#8b2626',
+            onContainer: '#f1e5a1',
           },
           secondary: {
-            main: '#CCC2DC',
-            container: '#4A4458',
-            onContainer: '#E8DEF8',
+            main: '#f1e5a1',
+            container: '#486c2f',
+            onContainer: '#eef5e8',
           },
           background: {
-            default: '#141218',
-            paper: '#141218',
-            surfaceContainerLow: '#1D1B20',
-            surfaceContainer: '#211F26',
-            surfaceContainerHigh: '#2B2930',
+            default: '#000000',
+            paper: '#0f0a0a',
+            surfaceContainerLow: '#1a1111',
+            surfaceContainer: '#241818',
+            surfaceContainerHigh: '#2e1f1f',
           },
           text: {
-            primary: '#E6E0E9',
-            secondary: '#CAC4D0',
+            primary: '#f1e5a1',
+            secondary: '#d9cd91',
           },
         }),
   },
