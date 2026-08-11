@@ -44,7 +44,9 @@ export function AppProvider({ children }) {
     try {
       // Fetch our own data.json with a cache-buster to ensure we get the absolute latest
       // bypassing the service worker or browser cache.
-      const url = `/data.json?t=${Date.now()}`;
+      // Use import.meta.env.BASE_URL so this works cleanly on GitHub Pages subdirectories
+      const baseUrl = import.meta.env.BASE_URL || '/';
+      const url = `${baseUrl}data.json?t=${Date.now()}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error("Failed to fetch latest data.json");
       
